@@ -3,7 +3,8 @@
 // Regenerate with `npm run gen-maps`.
 
 export enum GameMapType {
-  CarpathianMountains = "Carpathian Mountains", // custom map
+  Resr = "resr", // custom map
+  CobhamRiver = "Cobham River", // custom map
   Achiran = "Achiran", // map-generator/assets/maps/achiran/info.json
   Aegean = "Aegean", // map-generator/assets/maps/aegean/info.json
   Africa = "Africa", // map-generator/assets/maps/africa/info.json
@@ -162,14 +163,23 @@ export interface MapInfo {
   specialTeamCount?: number;
 }
 
-export const maps: readonly MapInfo[] = [
+export const maps: readonly MapInfo[] = [
   {
-    id: "CarpathianMountains",
-    type: GameMapType.CarpathianMountains,
-    translationKey: "map.carpathianmountains",
+    id: "Resr",
+    type: GameMapType.Resr,
+    translationKey: "map.resr",
     categories: ["custom"],
     multiplayerFrequency: 0,
   },
+  {
+    id: "CobhamRiver",
+    type: GameMapType.CobhamRiver,
+    translationKey: "map.cobhamriver",
+    categories: ["custom"],
+    multiplayerFrequency: 0,
+  },
+
+
   {
     id: "Achiran",
     type: GameMapType.Achiran,

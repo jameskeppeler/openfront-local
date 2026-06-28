@@ -857,9 +857,12 @@
     "user_avatar_alt": "{username}'s avatar",
     "wiki": "Wiki"
   },
-  "map": {
+  "map": {
+    "resr": "resr",
+    "cobhamriver": "Cobham River",
 
-    "carpathianmountains": "Carpathian Mountains",
+
+
     "achiran": "Achiran",
     "aegean": "Aegean",
     "africa": "Africa",

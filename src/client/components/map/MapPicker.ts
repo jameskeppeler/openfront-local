@@ -30,6 +30,68 @@ function mapsInCategory(category: MapCategory): MapInfo[] {
   return maps.filter((m) => m.categories.includes(category));
 }
 
+// --- Soft-delete for custom maps ------------------------------------------
+// Deleting a custom map hides it instantly (no jarring full-page reload) by
+// recording its id here; the real files/registration are removed on the next
+// app close/restart (see the pagehide handler below). Stale ids (maps already
+// removed) are pruned on read.
+const HIDDEN_CUSTOM_MAPS_KEY = "hiddenCustomMaps";
+
+function customMapIds(): Set<string> {
+  return new Set(
+    maps.filter((m) => m.categories.includes("custom")).map((m) => m.id),
+  );
+}
+
+function readHiddenCustomMaps(): string[] {
+  try {
+    const raw = localStorage.getItem(HIDDEN_CUSTOM_MAPS_KEY);
+    return raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+function getHiddenCustomMaps(): Set<string> {
+  const stored = readHiddenCustomMaps();
+  const valid = customMapIds();
+  const pruned = stored.filter((id) => valid.has(id));
+  if (pruned.length !== stored.length) {
+    try {
+      localStorage.setItem(HIDDEN_CUSTOM_MAPS_KEY, JSON.stringify(pruned));
+    } catch {
+      /* ignore */
+    }
+  }
+  return new Set(pruned);
+}
+
+function hideCustomMap(id: string): Set<string> {
+  const set = getHiddenCustomMaps();
+  set.add(id);
+  try {
+    localStorage.setItem(HIDDEN_CUSTOM_MAPS_KEY, JSON.stringify([...set]));
+  } catch {
+    /* ignore */
+  }
+  return set;
+}
+
+// On app close/restart, actually delete the maps the user hid this session.
+// sendBeacon survives unload; the resulting dev-server file change doesn't
+// matter because the page is going away.
+if (typeof window !== "undefined") {
+  window.addEventListener("pagehide", () => {
+    for (const id of readHiddenCustomMaps()) {
+      try {
+        navigator.sendBeacon?.(`/__delete-map?id=${encodeURIComponent(id)}`);
+      } catch {
+        /* ignore */
+      }
+    }
+  });
+}
+
 @customElement("map-picker")
 export class MapPicker extends LitElement {
   @property({ type: String }) selectedMap: GameMapType = GameMapType.World;
@@ -44,6 +106,7 @@ export class MapPicker extends LitElement {
   @state() private activeTab: MapTab = "featured";
   @state() private expandedCategories: Set<string> = new Set();
   @state() private favorites: GameMapType[] = getFavoriteMaps();
+  @state() private hiddenMaps: Set<string> = getHiddenCustomMaps();
 
   createRenderRoot() {
     return this;
@@ -220,29 +283,18 @@ export class MapPicker extends LitElement {
     </button>`;
   }
 
-  private handleDeleteMap = async (map: MapInfo) => {
+  private handleDeleteMap = (map: MapInfo) => {
     const name = translateText(map.translationKey);
     if (
       !window.confirm(
-        `Delete the custom map "${name}"? This removes its files and unregisters it from the game.`,
+        `Delete the custom map "${name}"? It disappears now; its files are removed when you next close/restart the game.`,
       )
     ) {
       return;
     }
-    try {
-      const res = await fetch(
-        `/__delete-map?id=${encodeURIComponent(map.id)}`,
-        { method: "POST" },
-      );
-      const data = await res.json();
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Delete failed");
-      }
-      // The maps list is compiled into the bundle, so reload to reflect it.
-      window.location.reload();
-    } catch (e) {
-      window.alert(`Couldn't delete map: ${(e as Error).message}`);
-    }
+    // Hide instantly (no full-page reload). Real deletion is deferred to the
+    // next app close (pagehide handler above) so the experience stays smooth.
+    this.hiddenMaps = hideCustomMap(map.id);
   };
 
   private renderCustomMapCard(map: MapInfo) {
@@ -274,7 +326,9 @@ export class MapPicker extends LitElement {
   }
 
   private renderCustomTab() {
-    const customMaps = mapsInCategory("custom");
+    const customMaps = mapsInCategory("custom").filter(
+      (m) => !this.hiddenMaps.has(m.id),
+    );
     return html`<div class="w-full space-y-4">
       ${this.renderSectionHeading(translateText("map_categories.custom"))}
       ${this.renderCreateMapButton()}

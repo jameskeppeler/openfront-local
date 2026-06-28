@@ -1,0 +1,28 @@
+{
+  "map": {
+    "height": 637,
+    "num_land_tiles": 572488,
+    "width": 1175
+  },
+  "map16x": {
+    "height": 159,
+    "num_land_tiles": 33420,
+    "width": 293
+  },
+  "map4x": {
+    "height": 318,
+    "num_land_tiles": 139680,
+    "width": 587
+  },
+  "name": "resr",
+  "nations": [
+    {
+      "coordinates": [
+        587,
+        318
+      ],
+      "flag": "ca",
+      "name": "Manitoba"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "additionalNations": [
+    {
+      "flag": "ca",
+      "name": "Mememwi-ziibiing / Berens River"
+    },
+    {
+      "flag": "ca",
+      "name": "\u140a\u144e\u146f \u14f4\u1472\u1426\u1403\u1472\u1423 Deer Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Opasquia"
+    }
+  ],
+  "map": {
+    "height": 636,
+    "num_land_tiles": 615036,
+    "width": 1179
+  },
+  "map16x": {
+    "height": 159,
+    "num_land_tiles": 36281,
+    "width": 294
+  },
+  "map4x": {
+    "height": 318,
+    "num_land_tiles": 150806,
+    "width": 589
+  },
+  "name": "cobhamriver",
+  "nations": [
+    {
+      "coordinates": [
+        589,
+        299
+      ],
+      "flag": "ca",
+      "name": "Manitoba"
+    },
+    {
+      "coordinates": [
+        1173,
+        610
+      ],
+      "flag": "ca",
+      "name": "Ontario"
+    }
+  ]
+}
