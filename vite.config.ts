@@ -89,6 +89,67 @@ function randomWorkerCreateProxy(numWorkers: number): Plugin {
   };
 }
 
+// Dev-only endpoint to delete a custom map: removes its resources/maps/<folder>
+// directory and unregisters it from Maps.gen.ts + en.json. Guarded so it only
+// ever deletes maps tagged categories: ["custom"] (never a built-in map).
+function customMapAdmin(resourcesDir: string, rootDir: string): Plugin {
+  return {
+    name: "custom-map-admin",
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (!req.url) return next();
+        const url = new URL(req.url, "http://x");
+        if (url.pathname !== "/__delete-map") return next();
+        const json = (code: number, body: unknown) => {
+          res.statusCode = code;
+          res.setHeader("Content-Type", "application/json");
+          res.end(JSON.stringify(body));
+        };
+        if (req.method !== "POST")
+          return json(405, { ok: false, error: "POST only" });
+        const id = url.searchParams.get("id") ?? "";
+        if (!/^[A-Za-z0-9]+$/.test(id))
+          return json(400, { ok: false, error: "invalid id" });
+        try {
+          const mapsTsPath = path.join(
+            rootDir,
+            "src/core/game/Maps.gen.ts",
+          );
+          let ts = fs.readFileSync(mapsTsPath, "utf-8");
+          const blockRe = new RegExp(
+            `\\n[ \\t]*\\{\\s*id:\\s*"${id}"[\\s\\S]*?\\n[ \\t]*\\},`,
+          );
+          const block = ts.match(blockRe);
+          if (!block) return json(404, { ok: false, error: "map not found" });
+          // Safety: refuse to delete anything that isn't a custom map.
+          if (!/categories:\s*\[[^\]]*"custom"[^\]]*\]/.test(block[0]))
+            return json(403, { ok: false, error: "not a custom map" });
+          ts = ts.replace(blockRe, "");
+          ts = ts.replace(
+            new RegExp(`\\n[ \\t]*${id}\\s*=\\s*"[^"]*",[^\\n]*`),
+            "",
+          );
+          fs.writeFileSync(mapsTsPath, ts);
+          const folder = id.toLowerCase();
+          const enPath = path.join(resourcesDir, "lang", "en.json");
+          let en = fs.readFileSync(enPath, "utf-8");
+          en = en.replace(
+            new RegExp(`\\n[ \\t]*"${folder}":\\s*"[^"]*",`),
+            "",
+          );
+          fs.writeFileSync(enPath, en);
+          const dir = path.join(resourcesDir, "maps", folder);
+          if (fs.existsSync(dir))
+            fs.rmSync(dir, { recursive: true, force: true });
+          return json(200, { ok: true, id, folder });
+        } catch (e) {
+          return json(500, { ok: false, error: (e as Error).message });
+        }
+      });
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const isProduction = mode === "production";
@@ -210,6 +271,7 @@ export default defineConfig(({ mode }) => {
         ? [
             serveProprietaryDir(proprietaryDir, resourcesDir),
             randomWorkerCreateProxy(devNumWorkers),
+            customMapAdmin(resourcesDir, __dirname),
           ]
         : []),
       ...(isProduction

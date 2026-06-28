@@ -220,13 +220,74 @@ export class MapPicker extends LitElement {
     </button>`;
   }
 
+  private handleDeleteMap = async (map: MapInfo) => {
+    const name = translateText(map.translationKey);
+    if (
+      !window.confirm(
+        `Delete the custom map "${name}"? This removes its files and unregisters it from the game.`,
+      )
+    ) {
+      return;
+    }
+    try {
+      const res = await fetch(
+        `/__delete-map?id=${encodeURIComponent(map.id)}`,
+        { method: "POST" },
+      );
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        throw new Error(data.error || "Delete failed");
+      }
+      // The maps list is compiled into the bundle, so reload to reflect it.
+      window.location.reload();
+    } catch (e) {
+      window.alert(`Couldn't delete map: ${(e as Error).message}`);
+    }
+  };
+
+  private renderCustomMapCard(map: MapInfo) {
+    return html`<div class="relative group/del">
+      ${this.renderMapCard(map)}
+      <button
+        type="button"
+        title=${translateText("map_component.delete_map")}
+        @click=${(e: Event) => {
+          e.stopPropagation();
+          this.handleDeleteMap(map);
+        }}
+        class="absolute top-2 left-2 z-20 w-7 h-7 flex items-center justify-center rounded-lg bg-black/60 text-white/80 hover:bg-red-600 hover:text-white opacity-0 group-hover/del:opacity-100 focus:opacity-100 transition-opacity"
+      >
+        <svg
+          class="w-4 h-4"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9 2a1 1 0 0 0-.894.553L7.382 4H4a1 1 0 0 0 0 2h12a1 1 0 1 0 0-2h-3.382l-.724-1.447A1 1 0 0 0 11 2H9zM6 8a1 1 0 0 1 2 0v6a1 1 0 1 1-2 0V8zm6 0a1 1 0 1 0-2 0v6a1 1 0 1 0 2 0V8z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </button>
+    </div>`;
+  }
+
   private renderCustomTab() {
     const customMaps = mapsInCategory("custom");
     return html`<div class="w-full space-y-4">
       ${this.renderSectionHeading(translateText("map_categories.custom"))}
       ${this.renderCreateMapButton()}
       ${customMaps.length > 0
-        ? this.renderMapGrid(customMaps)
+        ? html`<div
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+          >
+            ${repeat(
+              customMaps,
+              (map) => map.id,
+              (map) => this.renderCustomMapCard(map),
+            )}
+          </div>`
         : html`<div
             class="w-full flex flex-col items-center justify-center gap-3 py-12 px-4 text-center rounded-xl border border-dashed border-white/10 bg-black/20"
           >

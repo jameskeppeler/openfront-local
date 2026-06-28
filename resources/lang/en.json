@@ -857,7 +857,9 @@
     "user_avatar_alt": "{username}'s avatar",
     "wiki": "Wiki"
   },
-  "map": {
+  "map": {
+
+    "carpathianmountains": "Carpathian Mountains",
     "achiran": "Achiran",
     "aegean": "Aegean",
     "africa": "Africa",
@@ -986,6 +988,7 @@
   "map_component": {
     "create_map": "Create a Map",
     "custom_empty": "No custom maps yet — click \"Create a Map\" to build one from any region on Earth.",
+    "delete_map": "Delete custom map",
     "error": "Error",
     "favorite": "Add to favourites",
     "favorites_empty": "Click the star on any map to favourite it",

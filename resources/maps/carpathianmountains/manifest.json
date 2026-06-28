@@ -1,0 +1,52 @@
+{
+  "map": {
+    "height": 632,
+    "num_land_tiles": 747850,
+    "width": 1184
+  },
+  "map16x": {
+    "height": 158,
+    "num_land_tiles": 46665,
+    "width": 296
+  },
+  "map4x": {
+    "height": 316,
+    "num_land_tiles": 186862,
+    "width": 592
+  },
+  "name": "carpathianmountains",
+  "nations": [
+    {
+      "coordinates": [
+        592,
+        300
+      ],
+      "flag": "ro",
+      "name": "Romania"
+    },
+    {
+      "coordinates": [
+        67,
+        129
+      ],
+      "flag": "hu",
+      "name": "Hungary"
+    },
+    {
+      "coordinates": [
+        66,
+        486
+      ],
+      "flag": "rs",
+      "name": "Serbia"
+    },
+    {
+      "coordinates": [
+        1177,
+        15
+      ],
+      "flag": "md",
+      "name": "Moldova"
+    }
+  ]
+}
