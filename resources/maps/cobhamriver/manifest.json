@@ -299,8 +299,8 @@
   ],
   "map": {
     "height": 636,
-    "num_land_tiles": 615036,
-    "width": 1179
+    "num_land_tiles": 613307,
+    "width": 1176
   },
   "map16x": {
     "height": 159,
@@ -309,8 +309,8 @@
   },
   "map4x": {
     "height": 318,
-    "num_land_tiles": 150806,
-    "width": 589
+    "num_land_tiles": 150526,
+    "width": 588
   },
   "name": "cobhamriver",
   "nations": [
