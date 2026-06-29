@@ -3,6 +3,7 @@
 // Regenerate with `npm run gen-maps`.
 
 export enum GameMapType {
+  CobhamHighResV2 = "Cobham High-res V2", // custom map
   CobhamRiver = "Cobham River", // custom map
   Achiran = "Achiran", // map-generator/assets/maps/achiran/info.json
   Aegean = "Aegean", // map-generator/assets/maps/aegean/info.json
@@ -163,11 +164,13 @@ export interface MapInfo {
 }
 
 export const maps: readonly MapInfo[] = [
-
-
-
-
-
+  {
+    id: "CobhamHighResV2",
+    type: GameMapType.CobhamHighResV2,
+    translationKey: "map.cobhamhighresv2",
+    categories: ["custom"],
+    multiplayerFrequency: 0,
+  },
   {
     id: "CobhamRiver",
     type: GameMapType.CobhamRiver,
@@ -175,7 +178,6 @@ export const maps: readonly MapInfo[] = [
     categories: ["custom"],
     multiplayerFrequency: 0,
   },
-
 
   {
     id: "Achiran",

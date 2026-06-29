@@ -1,0 +1,78 @@
+{
+  "additionalNations": [
+    {
+      "flag": "ca",
+      "name": "\u140a\u144e\u146f \u14f4\u1472\u1426\u1403\u1472\u1423 Deer Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "\u14c0\u1472\u18de \u14f5\u1472\u1426\u1403\u1472\u14c3\u1423\u1420 Sandy Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "\u146e\u140c\u140e\u1423 Keewaywin"
+    },
+    {
+      "flag": "ca",
+      "name": "Mememwi-ziibiing / Berens River"
+    },
+    {
+      "flag": "ca",
+      "name": "Azaadiwi-ziibing / Poplar River"
+    },
+    {
+      "flag": "ca",
+      "name": "Bawingaasi / Pauingassi"
+    },
+    {
+      "flag": "ca",
+      "name": "\u1417\u1490\u1421\u147e\u14c2\u14a5\u1420 Muskrat Dam"
+    },
+    {
+      "flag": "ca",
+      "name": "\u14a3\u14a3\u1474\u1511 \u14f4\u1472\u1426\u1403\u1472\u1423 North Spirit Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Misi-zhaaga'iganiing / McDowell Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Opasquia"
+    }
+  ],
+  "map": {
+    "height": 1002,
+    "num_land_tiles": 2585030,
+    "width": 2992
+  },
+  "map16x": {
+    "height": 250,
+    "num_land_tiles": 154962,
+    "width": 748
+  },
+  "map4x": {
+    "height": 501,
+    "num_land_tiles": 637783,
+    "width": 1496
+  },
+  "name": "cobhamhigh-resv2",
+  "nations": [
+    {
+      "coordinates": [
+        1401,
+        427
+      ],
+      "flag": "ca",
+      "name": "Manitoba"
+    },
+    {
+      "coordinates": [
+        2897,
+        427
+      ],
+      "flag": "ca",
+      "name": "Ontario"
+    }
+  ]
+}
