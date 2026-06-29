@@ -2,15 +2,299 @@
   "additionalNations": [
     {
       "flag": "ca",
-      "name": "Mememwi-ziibiing / Berens River"
+      "name": "Cobham"
     },
     {
       "flag": "ca",
-      "name": "\u140a\u144e\u146f \u14f4\u1472\u1426\u1403\u1472\u1423 Deer Lake"
+      "name": "Elliot Lake"
     },
     {
       "flag": "ca",
-      "name": "Opasquia"
+      "name": "Hidden Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Acheetamo"
+    },
+    {
+      "flag": "ca",
+      "name": "Vee Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Deer Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Anishinabe Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Wendigo Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Cobham Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Poplar River"
+    },
+    {
+      "flag": "ca",
+      "name": "Harrop Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Black Birch"
+    },
+    {
+      "flag": "ca",
+      "name": "Namiwan"
+    },
+    {
+      "flag": "ca",
+      "name": "Sandy Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Severn"
+    },
+    {
+      "flag": "ca",
+      "name": "Warrington"
+    },
+    {
+      "flag": "ca",
+      "name": "Two Legged River"
+    },
+    {
+      "flag": "ca",
+      "name": "Wawakuskwayank"
+    },
+    {
+      "flag": "ca",
+      "name": "Kakinokamak"
+    },
+    {
+      "flag": "ca",
+      "name": "Lily Pad"
+    },
+    {
+      "flag": "ca",
+      "name": "Cochrane River"
+    },
+    {
+      "flag": "ca",
+      "name": "Manitoba"
+    },
+    {
+      "flag": "ca",
+      "name": "Ontario"
+    },
+    {
+      "flag": "ca",
+      "name": "Kenora"
+    },
+    {
+      "flag": "ca",
+      "name": "Treaty Five"
+    },
+    {
+      "flag": "ca",
+      "name": "Anishinaabe"
+    },
+    {
+      "flag": "ca",
+      "name": "Ojibwe"
+    },
+    {
+      "flag": "ca",
+      "name": "Azaadiwi-ziibiing"
+    },
+    {
+      "flag": "ca",
+      "name": "Poplar River First Nation"
+    },
+    {
+      "flag": "ca",
+      "name": "Pimachiowin Aki"
+    },
+    {
+      "flag": "ca",
+      "name": "Boreal Shield"
+    },
+    {
+      "flag": "ca",
+      "name": "Canadian Shield"
+    },
+    {
+      "flag": "ca",
+      "name": "Hudson Bay"
+    },
+    {
+      "flag": "ca",
+      "name": "Lake Winnipeg"
+    },
+    {
+      "flag": "ca",
+      "name": "Eastern Manitoba"
+    },
+    {
+      "flag": "ca",
+      "name": "Northwest Ontario"
+    },
+    {
+      "flag": "ca",
+      "name": "Walleye"
+    },
+    {
+      "flag": "ca",
+      "name": "Northern Pike"
+    },
+    {
+      "flag": "ca",
+      "name": "Perch"
+    },
+    {
+      "flag": "ca",
+      "name": "Whitefish"
+    },
+    {
+      "flag": "ca",
+      "name": "Lake Trout"
+    },
+    {
+      "flag": "ca",
+      "name": "Brook Trout"
+    },
+    {
+      "flag": "ca",
+      "name": "Pickerel"
+    },
+    {
+      "flag": "ca",
+      "name": "Blue Pike"
+    },
+    {
+      "flag": "ca",
+      "name": "Sturgeon"
+    },
+    {
+      "flag": "ca",
+      "name": "Moose"
+    },
+    {
+      "flag": "ca",
+      "name": "Black Bear"
+    },
+    {
+      "flag": "ca",
+      "name": "Woodland Caribou"
+    },
+    {
+      "flag": "ca",
+      "name": "Lynx"
+    },
+    {
+      "flag": "ca",
+      "name": "Wolf"
+    },
+    {
+      "flag": "ca",
+      "name": "Beaver"
+    },
+    {
+      "flag": "ca",
+      "name": "Otter"
+    },
+    {
+      "flag": "ca",
+      "name": "Bald Eagle"
+    },
+    {
+      "flag": "ca",
+      "name": "Raven"
+    },
+    {
+      "flag": "ca",
+      "name": "Whiskeyjack"
+    },
+    {
+      "flag": "ca",
+      "name": "Spruce"
+    },
+    {
+      "flag": "ca",
+      "name": "Jack Pine"
+    },
+    {
+      "flag": "ca",
+      "name": "Tamarack"
+    },
+    {
+      "flag": "ca",
+      "name": "Birch"
+    },
+    {
+      "flag": "ca",
+      "name": "Poplar"
+    },
+    {
+      "flag": "ca",
+      "name": "Cedar"
+    },
+    {
+      "flag": "ca",
+      "name": "Muskeg"
+    },
+    {
+      "flag": "ca",
+      "name": "Bog"
+    },
+    {
+      "flag": "ca",
+      "name": "Rapids"
+    },
+    {
+      "flag": "ca",
+      "name": "Portage"
+    },
+    {
+      "flag": "ca",
+      "name": "Floatplane"
+    },
+    {
+      "flag": "ca",
+      "name": "Outpost"
+    },
+    {
+      "flag": "ca",
+      "name": "Shore Lunch"
+    },
+    {
+      "flag": "ca",
+      "name": "Barbless Hook"
+    },
+    {
+      "flag": "ca",
+      "name": "Cabbage Weed"
+    },
+    {
+      "flag": "ca",
+      "name": "Clearwater"
+    },
+    {
+      "flag": "ca",
+      "name": "Blackwater"
+    },
+    {
+      "flag": "ca",
+      "name": "Granite"
+    },
+    {
+      "flag": "ca",
+      "name": "Shield Country"
     }
   ],
   "map": {
@@ -31,20 +315,52 @@
   "name": "cobhamriver",
   "nations": [
     {
-      "coordinates": [
-        589,
-        299
-      ],
       "flag": "ca",
-      "name": "Manitoba"
+      "name": "Cobham"
     },
     {
-      "coordinates": [
-        1173,
-        610
-      ],
       "flag": "ca",
-      "name": "Ontario"
+      "name": "Elliot Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Hidden Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Acheetamo"
+    },
+    {
+      "flag": "ca",
+      "name": "Vee Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Deer Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Anishinabe Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Wendigo Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Cobham Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Poplar River"
+    },
+    {
+      "flag": "ca",
+      "name": "Harrop Lake"
+    },
+    {
+      "flag": "ca",
+      "name": "Black Birch"
     }
   ]
 }
