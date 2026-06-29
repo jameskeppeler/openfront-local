@@ -3,7 +3,6 @@
 // Regenerate with `npm run gen-maps`.
 
 export enum GameMapType {
-  HB = "HB", // custom map
   CobhamRiver = "Cobham River", // custom map
   Achiran = "Achiran", // map-generator/assets/maps/achiran/info.json
   Aegean = "Aegean", // map-generator/assets/maps/aegean/info.json
@@ -164,13 +163,6 @@ export interface MapInfo {
 }
 
 export const maps: readonly MapInfo[] = [
-  {
-    id: "HB",
-    type: GameMapType.HB,
-    translationKey: "map.hb",
-    categories: ["custom"],
-    multiplayerFrequency: 0,
-  },
 
 
 
