@@ -14,6 +14,7 @@ import "./components/IOSAddToHomeScreenBanner";
 import { crazyGamesSDK } from "./CrazyGamesSDK";
 import { HostLobbyModal } from "./HostLobbyModal";
 import { JoinLobbyModal } from "./JoinLobbyModal";
+import { LanGameModal } from "./LanGameModal";
 import { PublicLobbySocket } from "./LobbySocket";
 import { JoinLobbyEvent } from "./Main";
 import { SinglePlayerModal } from "./SinglePlayerModal";
@@ -238,6 +239,14 @@ export class GameModeSelector extends LitElement {
             "bg-surface hover:brightness-[1.08] active:brightness-[0.95] hover:scale-105 hover:shadow-[var(--shadow-action-card-hover)]",
           )}
         </div>
+        <!-- LAN game: full width, all layouts -->
+        <div class="h-14">
+          ${this.renderSmallActionCard(
+            translateText("lan.menu_button"),
+            this.openLanGame,
+            "bg-surface hover:brightness-[1.08] active:brightness-[0.95] hover:scale-105 hover:shadow-[var(--shadow-action-card-hover)]",
+          )}
+        </div>
       </div>
     `;
   }
@@ -266,6 +275,11 @@ export class GameModeSelector extends LitElement {
   private openJoinLobby = () => {
     if (!this.validateUsername()) return;
     (document.querySelector("join-lobby-modal") as JoinLobbyModal)?.open();
+  };
+
+  private openLanGame = () => {
+    if (!this.validateUsername()) return;
+    (document.querySelector("lan-game-modal") as LanGameModal)?.open();
   };
 
   private renderSmallActionCard(

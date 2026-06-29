@@ -1,5 +1,8 @@
 @echo off
-title OpenFront Launcher
+title OpenFront Launcher (LAN)
+REM OpenFront launcher (Windows) - LAN multiplayer.
+REM Double-click to host a game on your local network. Friends on the same
+REM Wi-Fi/network play by opening the http://<your-ip>:9000 address in a browser.
 REM Run from this script's own folder, so it works wherever the repo is cloned.
 pushd "%~dp0"
 
@@ -18,15 +21,12 @@ if %errorlevel%==0 (
   exit /b
 )
 
-echo Starting the OpenFront dev server...
+echo Starting OpenFront in LAN mode...
 echo (A separate window will open - keep it open while playing, close it to stop.)
-REM The new window inherits this folder as its working directory.
-start "OpenFront Server - close this window to stop the game" cmd /k "npm run dev"
+echo Share the http://your-ip:9000 address shown in that window with friends.
+REM `npm run lan` binds to the local network, prints the shareable address, and
+REM opens the browser once the server is ready. The new window inherits this folder.
+start "OpenFront LAN Server - close this window to stop the game" cmd /k "npm run lan"
 
-echo.
-echo Waiting for the game to be ready (first launch can take ~15-30s)...
-powershell -NoProfile -Command "for ($i=0; $i -lt 120; $i++) { try { Invoke-WebRequest -Uri 'http://localhost:9000' -UseBasicParsing -TimeoutSec 2 | Out-Null; Write-Host 'Ready!'; exit 0 } catch { Start-Sleep -Seconds 1 } } ; exit 1"
-
-start "" "http://localhost:9000"
 popd
 exit /b
