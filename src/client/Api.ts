@@ -12,6 +12,7 @@ import {
 } from "../core/ApiSchemas";
 import { AnalyticsRecord, AnalyticsRecordSchema } from "../core/Schemas";
 import { getAuthHeader, logOut, userAuth } from "./Auth";
+import { isLanHost } from "./Lan";
 
 export async function fetchPlayerById(
   playerId: string,
@@ -265,7 +266,11 @@ export async function openSubscriptionPortal(): Promise<string | false> {
 export function getApiBase() {
   const domainname = getAudience();
 
-  if (domainname === "localhost") {
+  // On a LAN address (e.g. http://192.168.1.42:9000) the public API domain
+  // (https://api.<...>) doesn't resolve, so treat LAN hosts like localhost and
+  // point at the (optional) local API. LAN guest sessions skip auth entirely
+  // upstream, so this is mostly a safe fallback.
+  if (domainname === "localhost" || isLanHost(window.location.hostname)) {
     const apiDomain = process?.env?.API_DOMAIN;
     if (apiDomain) {
       return `https://${apiDomain}`;

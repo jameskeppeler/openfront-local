@@ -787,6 +787,21 @@
     "host_left": "The host has left the lobby.",
     "lobby_creator": "Kicked by lobby creator"
   },
+  "lan": {
+    "copied": "Copied!",
+    "copy": "Copy",
+    "host": "Host a LAN Game",
+    "host_desc": "Create a lobby and add AI opponents. Friends join from the address above.",
+    "intro": "Play with friends on your local network. One person hosts and everyone else joins from a browser — no account or internet connection required.",
+    "join": "Join a LAN Game",
+    "join_desc": "Enter a lobby code shared by the host.",
+    "localhost_warning": "You're viewing on localhost, which other devices can't reach. Share one of the network addresses below instead.",
+    "menu_button": "LAN Game",
+    "no_address": "Couldn't detect a network address. Make sure you're connected to Wi-Fi or Ethernet.",
+    "same_network": "Everyone must be on the same Wi-Fi or network.",
+    "share_label": "Friends join by opening this address:",
+    "title": "LAN Game"
+  },
   "lang": {
     "en": "English",
     "lang_code": "en",
@@ -860,13 +875,7 @@
   "map": {
     "hb": "HB",
 
-
-
-
-
     "cobhamriver": "Cobham River",
-
-
 
     "achiran": "Achiran",
     "aegean": "Aegean",

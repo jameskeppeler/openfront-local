@@ -4,6 +4,7 @@ import { z } from "zod";
 import { TokenPayload, TokenPayloadSchema } from "../core/ApiSchemas";
 import { base64urlToUuid } from "../core/Base64";
 import { getApiBase, getAudience } from "./Api";
+import { isLanGuestSession } from "./Lan";
 import { generateCryptoRandomUUID } from "./Utils";
 
 export type UserAuth = { jwt: string; claims: TokenPayload } | false;
@@ -112,6 +113,13 @@ export async function isLoggedIn(): Promise<boolean> {
 export async function userAuth(
   shouldRefresh: boolean = true,
 ): Promise<UserAuth> {
+  // LAN guests (a friend who opened the host's LAN IP) have no account and no
+  // reachable auth API. Short-circuit to guest so we never attempt a token
+  // refresh against a non-existent server — getPlayToken() then falls back to a
+  // locally-generated persistent ID, which the dev server accepts.
+  if (isLanGuestSession()) {
+    return false;
+  }
   try {
     const jwt = __jwt;
     if (!jwt) {

@@ -3,6 +3,7 @@ import crypto from "crypto";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import http from "http";
+import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
 import { GameEnv } from "../core/configuration/Config";
@@ -142,6 +143,37 @@ app.get("/api/health", (_req, res) => {
   } else {
     res.status(503).json({ status: "unavailable" });
   }
+});
+
+// LAN helper: report this machine's private IPv4 addresses so the in-game "LAN"
+// screen can show the host the exact URL to share with friends. Dev-only — never
+// expose the host's network interfaces in staging/prod.
+app.get("/api/lan_info", (_req, res) => {
+  if (ServerEnv.env() !== GameEnv.Dev) {
+    res.status(404).json({ error: "not_found" });
+    return;
+  }
+  const addresses: string[] = [];
+  for (const ifaces of Object.values(os.networkInterfaces())) {
+    for (const iface of ifaces ?? []) {
+      // Node reports family as "IPv4"; some runtimes use the number 4.
+      const family = String(iface.family);
+      if ((family === "IPv4" || family === "4") && !iface.internal) {
+        addresses.push(iface.address);
+      }
+    }
+  }
+  // Sort the most "LAN-looking" addresses first (192.168 > 10 > 172 > rest).
+  const rank = (ip: string) =>
+    ip.startsWith("192.168.")
+      ? 0
+      : ip.startsWith("10.")
+        ? 1
+        : ip.startsWith("172.")
+          ? 2
+          : 3;
+  addresses.sort((a, b) => rank(a) - rank(b));
+  res.json({ addresses });
 });
 
 // SPA fallback route
