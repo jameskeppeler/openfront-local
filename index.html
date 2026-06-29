@@ -84,12 +84,6 @@
       );
     </script>
 
-    <!-- CrazyGames SDK -->
-    <script
-      src="https://sdk.crazygames.com/crazygames-sdk-v3.js"
-      async
-    ></script>
-
     <!-- Cloudflare Turnstile -->
     <script
       src="https://challenges.cloudflare.com/turnstile/v0/api.js"
@@ -98,47 +92,28 @@
     ></script>
 
     <script data-cfasync="false">
-      window.ramp = window.ramp || {};
-      window.ramp.que = window.ramp.que || [];
-      window.ramp.passiveMode = true;
+      // Ads disabled in this build: replace Playwire RAMP with no-ops so no ad
+      // units ever load and nothing throws if an ad component calls a ramp
+      // method. The real ramp.js loader has been removed below.
+      (function () {
+        var noop = function () {};
+        var resolve = function () {
+          return Promise.resolve();
+        };
+        window.ramp = {
+          que: [],
+          passiveMode: true,
+          addUnits: resolve,
+          displayUnits: noop,
+          destroyUnits: resolve,
+          spaAddAds: resolve,
+          spaNewPage: noop,
+          setPath: noop,
+        };
+      })();
     </script>
 
-    <script>
-      window.googletag = window.googletag || { cmd: [] };
-      googletag.cmd.push(function () {
-        googletag.pubads().set("page_url", "http://openfront.io ");
-      });
-    </script>
-
-    <!-- Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=AW-16702609763"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-
-      gtag("js", new Date());
-      gtag("config", "AW-16702609763");
-    </script>
-    <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-WQGQQ8RDN4"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "G-WQGQQ8RDN4");
-    </script>
+    <!-- Google Ad Manager + Google Ads/Analytics (gtag) removed: no tracking in this build. -->
   </head>
 
   <body
@@ -439,19 +414,8 @@
       });
     </script>
 
-    <!-- Analytics -->
-    <script
-      defer
-      src="https://static.cloudflareinsights.com/beacon.min.js"
-      data-cf-beacon='{"token": "03d93e6fefb349c28ee69b408fa25a13"}'
-    ></script>
+    <!-- Cloudflare Insights beacon removed: no tracking in this build. -->
     <script type="module" src="/src/client/Main.ts"></script>
-    <footer>
-      <script
-        data-cfasync="false"
-        async
-        src="//cdn.intergient.com/1025558/75940/ramp.js"
-      ></script>
-    </footer>
+    <!-- Playwire RAMP ad loader removed (ads disabled in this build). -->
   </body>
 </html>
