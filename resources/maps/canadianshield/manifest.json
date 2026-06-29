@@ -1,0 +1,36 @@
+{
+  "map": {
+    "height": 640,
+    "num_land_tiles": 700456,
+    "width": 1164
+  },
+  "map16x": {
+    "height": 160,
+    "num_land_tiles": 42570,
+    "width": 291
+  },
+  "map4x": {
+    "height": 320,
+    "num_land_tiles": 173344,
+    "width": 582
+  },
+  "name": "canadianshield",
+  "nations": [
+    {
+      "coordinates": [
+        564,
+        321
+      ],
+      "flag": "ca",
+      "name": "Qu\u00e9bec"
+    },
+    {
+      "coordinates": [
+        1146,
+        321
+      ],
+      "flag": "ca",
+      "name": "Newfoundland and Labrador"
+    }
+  ]
+}

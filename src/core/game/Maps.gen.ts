@@ -3,6 +3,7 @@
 // Regenerate with `npm run gen-maps`.
 
 export enum GameMapType {
+  CanadianShield = "Canadian Shield", // custom map
   CobhamHighResV2 = "Cobham High-res V2", // custom map
   CobhamRiver = "Cobham River", // custom map
   Achiran = "Achiran", // map-generator/assets/maps/achiran/info.json
@@ -164,6 +165,13 @@ export interface MapInfo {
 }
 
 export const maps: readonly MapInfo[] = [
+  {
+    id: "CanadianShield",
+    type: GameMapType.CanadianShield,
+    translationKey: "map.canadianshield",
+    categories: ["custom"],
+    multiplayerFrequency: 0,
+  },
   {
     id: "CobhamHighResV2",
     type: GameMapType.CobhamHighResV2,
