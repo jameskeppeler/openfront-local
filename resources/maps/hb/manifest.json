@@ -1,0 +1,60 @@
+{
+  "map": {
+    "height": 766,
+    "num_land_tiles": 463648,
+    "width": 978
+  },
+  "map16x": {
+    "height": 191,
+    "num_land_tiles": 27085,
+    "width": 244
+  },
+  "map4x": {
+    "height": 383,
+    "num_land_tiles": 113362,
+    "width": 489
+  },
+  "name": "hb",
+  "nations": [
+    {
+      "coordinates": [
+        800,
+        437
+      ],
+      "flag": "ca",
+      "name": "Qu\u00e9bec"
+    },
+    {
+      "coordinates": [
+        286,
+        596
+      ],
+      "flag": "ca",
+      "name": "Ontario"
+    },
+    {
+      "coordinates": [
+        68,
+        126
+      ],
+      "flag": "ca",
+      "name": "Nunavut"
+    },
+    {
+      "coordinates": [
+        93,
+        504
+      ],
+      "flag": "ca",
+      "name": "Manitoba"
+    },
+    {
+      "coordinates": [
+        941,
+        613
+      ],
+      "flag": "ca",
+      "name": "Newfoundland and Labrador"
+    }
+  ]
+}
