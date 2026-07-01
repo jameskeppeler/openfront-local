@@ -1,14 +1,11 @@
 import { html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { z } from "zod";
 import { translateText } from "../client/Utils";
 import "./components/baseComponents/Modal";
 import { BaseModal, ModalConfig } from "./components/BaseModal";
 import { modalHeader } from "./components/ui/ModalHeader";
 import { HostLobbyModal } from "./HostLobbyModal";
-import { isShareableLanOrigin } from "./Lan";
-
-const LanInfoSchema = z.object({ addresses: z.string().array() });
+import { fetchLanAddresses, isShareableLanOrigin } from "./Lan";
 
 /**
  * The "LAN Game" landing screen. Explains the local-network flow, shows the
@@ -40,17 +37,7 @@ export class LanGameModal extends BaseModal {
   // if the page is already on a LAN address we can fall back to the current
   // origin, so a failed fetch is not fatal.
   private async loadAddresses(): Promise<void> {
-    try {
-      const res = await fetch("/api/lan_info");
-      if (!res.ok) {
-        this.addresses = [];
-        return;
-      }
-      const parsed = LanInfoSchema.safeParse(await res.json());
-      this.addresses = parsed.success ? parsed.data.addresses : [];
-    } catch {
-      this.addresses = [];
-    }
+    this.addresses = await fetchLanAddresses();
   }
 
   // The full URLs friends should open. Prefer server-detected interfaces; if
