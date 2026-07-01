@@ -3,6 +3,7 @@
 // Regenerate with `npm run gen-maps`.
 
 export enum GameMapType {
+  PalmerPeninsula = "Palmer Peninsula", // custom map
   CanadianShield = "Canadian Shield", // custom map
   CobhamHighResV2 = "Cobham High-res V2", // custom map
   CobhamRiver = "Cobham River", // custom map
@@ -165,6 +166,13 @@ export interface MapInfo {
 }
 
 export const maps: readonly MapInfo[] = [
+  {
+    id: "PalmerPeninsula",
+    type: GameMapType.PalmerPeninsula,
+    translationKey: "map.palmerpeninsula",
+    categories: ["custom"],
+    multiplayerFrequency: 0,
+  },
   {
     id: "CanadianShield",
     type: GameMapType.CanadianShield,

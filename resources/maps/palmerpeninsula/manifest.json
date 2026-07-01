@@ -1,0 +1,28 @@
+{
+  "map": {
+    "height": 1380,
+    "num_land_tiles": 629486,
+    "width": 2172
+  },
+  "map16x": {
+    "height": 345,
+    "num_land_tiles": 36247,
+    "width": 543
+  },
+  "map4x": {
+    "height": 690,
+    "num_land_tiles": 153106,
+    "width": 1086
+  },
+  "name": "palmerpeninsula",
+  "nations": [
+    {
+      "coordinates": [
+        1019,
+        897
+      ],
+      "flag": "aq",
+      "name": "Antarctica"
+    }
+  ]
+}
