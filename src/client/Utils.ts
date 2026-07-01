@@ -266,7 +266,15 @@ export async function copyToClipboard(
   timeout = 2000,
 ): Promise<void> {
   try {
-    await navigator.clipboard.writeText(text);
+    // The async Clipboard API only exists in a secure context (HTTPS or
+    // localhost). Over a plain-HTTP LAN address — how friends reach a LAN host —
+    // `navigator.clipboard` is undefined, so fall back to the legacy
+    // execCommand path.
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else if (!legacyCopyToClipboard(text)) {
+      throw new Error("execCommand copy failed");
+    }
     if (onSuccess) onSuccess();
     if (onReset) {
       setTimeout(() => {
@@ -275,6 +283,29 @@ export async function copyToClipboard(
     }
   } catch (err) {
     console.warn("Failed to copy to clipboard", err);
+  }
+}
+
+// Legacy clipboard copy for non-secure contexts (plain-HTTP LAN). Selects a
+// hidden textarea and asks the browser to copy the selection. Returns whether
+// the copy reportedly succeeded.
+function legacyCopyToClipboard(text: string): boolean {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  // Keep it out of view and non-disruptive to scroll/focus.
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.top = "-9999px";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  try {
+    textarea.select();
+    textarea.setSelectionRange(0, text.length);
+    return document.execCommand("copy");
+  } catch {
+    return false;
+  } finally {
+    document.body.removeChild(textarea);
   }
 }
 

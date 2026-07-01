@@ -1,6 +1,6 @@
 import { html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { translateText } from "../client/Utils";
+import { copyToClipboard, translateText } from "../client/Utils";
 import "./components/baseComponents/Modal";
 import { BaseModal, ModalConfig } from "./components/BaseModal";
 import { modalHeader } from "./components/ui/ModalHeader";
@@ -53,13 +53,17 @@ export class LanGameModal extends BaseModal {
   }
 
   private async copy(url: string): Promise<void> {
-    try {
-      await navigator.clipboard.writeText(url);
-      this.copied = true;
-      setTimeout(() => (this.copied = false), 1500);
-    } catch (e) {
-      console.error("Failed to copy LAN url", e);
-    }
+    // Route through copyToClipboard so this works over a plain-HTTP LAN address,
+    // where the async Clipboard API is unavailable (non-secure context).
+    await copyToClipboard(
+      url,
+      () => {
+        this.copied = true;
+        setTimeout(() => (this.copied = false), 1500);
+      },
+      undefined,
+      1500,
+    );
   }
 
   private openHost = () => {
