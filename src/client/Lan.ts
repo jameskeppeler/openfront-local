@@ -76,3 +76,46 @@ export function isShareableLanOrigin(): boolean {
   if (typeof window === "undefined") return false;
   return !isLoopbackHost(window.location.hostname);
 }
+
+// Cache the LAN address lookup for the lifetime of the page: the host's network
+// interfaces don't change mid-session and every share-link build would otherwise
+// re-hit the server.
+let cachedLanAddresses: Promise<string[]> | null = null;
+
+/**
+ * Fetch this machine's private IPv4 addresses from the dev server's
+ * `/api/lan_info`. Best-effort and cached; returns `[]` on any failure or
+ * outside dev (where the endpoint 404s).
+ */
+export async function fetchLanAddresses(): Promise<string[]> {
+  cachedLanAddresses ??= (async () => {
+    try {
+      const res = await fetch("/api/lan_info");
+      if (!res.ok) return [];
+      const data: unknown = await res.json();
+      const addresses = (data as { addresses?: unknown })?.addresses;
+      return Array.isArray(addresses)
+        ? addresses.filter((a): a is string => typeof a === "string")
+        : [];
+    } catch {
+      return [];
+    }
+  })();
+  return cachedLanAddresses;
+}
+
+/**
+ * The origin other machines on the LAN should use to reach this host. If the
+ * page is already on a shareable LAN address, that origin is returned unchanged.
+ * Otherwise (the host opened localhost) we ask the dev server for its private
+ * IPv4 address and build an origin from the best one, preserving the port — so
+ * copied lobby links point at the LAN IP instead of a useless `localhost`.
+ * Falls back to the current origin when no LAN address is available.
+ */
+export async function getShareableOrigin(): Promise<string> {
+  if (isShareableLanOrigin()) return window.location.origin;
+  const addresses = await fetchLanAddresses();
+  if (addresses.length === 0) return window.location.origin;
+  const port = window.location.port ? `:${window.location.port}` : "";
+  return `http://${addresses[0]}${port}`;
+}

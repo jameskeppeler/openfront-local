@@ -34,6 +34,7 @@ import "./components/LobbyPlayerView";
 import "./components/ToggleInputCard";
 import { modalHeader } from "./components/ui/ModalHeader";
 import { crazyGamesSDK } from "./CrazyGamesSDK";
+import { getShareableOrigin } from "./Lan";
 import { JoinLobbyEvent } from "./Main";
 import { terrainMapFileLoader } from "./TerrainMapFileLoader";
 import {
@@ -139,7 +140,8 @@ export class HostLobbyModal extends BaseModal {
         return link;
       }
     }
-    return `${window.location.origin}/${ClientEnv.workerPath(this.lobbyId)}/game/${this.lobbyId}?lobby&s=${encodeURIComponent(this.lobbyUrlSuffix)}`;
+    const origin = await getShareableOrigin();
+    return `${origin}/${ClientEnv.workerPath(this.lobbyId)}/game/${this.lobbyId}?lobby&s=${encodeURIComponent(this.lobbyUrlSuffix)}`;
   }
 
   private async constructUrl(): Promise<string> {
