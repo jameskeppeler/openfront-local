@@ -88,6 +88,10 @@ export class HostLobbyModal extends BaseModal {
   @state() private lobbyUrlSuffix = "";
   @state() private clients: ClientInfo[] = [];
   @state() private useRandomMap: boolean = false;
+  // Seed for the procedural "Random" map; null => fully random (hidden).
+  @state() private mapSeed: number | null = Math.floor(
+    Math.random() * 0x7fffffff,
+  );
   @state() private disabledUnits: UnitType[] = [];
   @state() private hostCheatsEnabled: boolean = false;
   @state() private hostCheatInfiniteGold: boolean = false;
@@ -361,6 +365,7 @@ export class HostLobbyModal extends BaseModal {
               map: {
                 selected: this.selectedMap,
                 useRandom: this.useRandomMap,
+                mapSeed: this.mapSeed,
                 randomMapDivider: true,
               },
               difficulty: {
@@ -456,6 +461,7 @@ export class HostLobbyModal extends BaseModal {
             }}
             @map-selected=${this.handleConfigMapSelected}
             @random-map-selected=${this.handleConfigRandomMapSelected}
+            @random-seed-changed=${this.handleRandomSeedChanged}
             @difficulty-selected=${this.handleConfigDifficultySelected}
             @game-mode-selected=${this.handleConfigGameModeSelected}
             @team-count-selected=${this.handleConfigTeamCountSelected}
@@ -639,6 +645,11 @@ export class HostLobbyModal extends BaseModal {
   private async handleMapSelection(value: GameMapType) {
     this.selectedMap = value;
     this.useRandomMap = false;
+    // Selecting the generated map should show a preview, so ensure a concrete
+    // seed exists (a prior "surprise me" may have cleared it).
+    if (value === GameMapType.Random && this.mapSeed === null) {
+      this.mapSeed = Math.floor(Math.random() * 0x7fffffff);
+    }
     await this.loadNationCount();
     this.putGameConfig();
   }
@@ -646,6 +657,12 @@ export class HostLobbyModal extends BaseModal {
   private handleConfigMapSelected = (e: Event) => {
     const customEvent = e as CustomEvent<{ map: GameMapType }>;
     void this.handleMapSelection(customEvent.detail.map);
+  };
+
+  private handleRandomSeedChanged = (e: Event) => {
+    const detail = (e as CustomEvent<{ seed: number | null }>).detail;
+    this.mapSeed = detail.seed;
+    this.putGameConfig();
   };
 
   private async handleDifficultySelection(value: Difficulty) {
@@ -1062,6 +1079,8 @@ export class HostLobbyModal extends BaseModal {
         detail: {
           config: {
             gameMap: this.selectedMap,
+            mapSeed:
+              this.selectedMap === GameMapType.Random ? this.mapSeed : null,
             gameMapSize: this.compactMap
               ? GameMapSize.Compact
               : GameMapSize.Normal,

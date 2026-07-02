@@ -298,6 +298,11 @@ export const GameConfigSchema = z.object({
   nameRevealPublicIds: z.string().array().max(200).optional(),
   waterNukes: z.boolean().nullable().optional(),
   randomSpawn: z.boolean(),
+  // Seed for the procedurally-generated "Random" map. When set, every client
+  // generates an identical map from it (and the lobby preview matches). When
+  // null/undefined the map is "fully random": the seed is derived from gameID
+  // at match start, so nobody sees it in advance.
+  mapSeed: z.number().int().nullable().optional(),
   maxPlayers: z.number().optional(),
   // OFM: allowlist of publicIds allowed to join (admin-only, see create_game).
   allowedPublicIds: z.array(z.string()).max(200).optional(),

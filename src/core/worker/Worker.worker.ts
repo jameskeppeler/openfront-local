@@ -1,6 +1,7 @@
 import { assetUrl } from "../AssetUrls";
 import { FetchGameMapLoader } from "../game/FetchGameMapLoader";
 import { ErrorUpdate, GameUpdateViewData } from "../game/GameUpdates";
+import { selectMapLoader } from "../game/ProceduralGameMapLoader";
 import { createGameRunner, GameRunner } from "../GameRunner";
 import {
   AttackClusteredPositionsResultMessage,
@@ -143,10 +144,20 @@ ctx.addEventListener("message", async (e: MessageEvent<MainThreadMessage>) => {
         // Set before createGameRunner so map fetches via mapLoader pick up the
         // CDN base. Workers have no `window`, so AssetUrls falls back to this.
         globalThis.__CDN_BASE__ = message.cdnBase;
-        gameRunner = createGameRunner(
-          message.gameStartInfo,
-          message.clientID,
+        // The "Random" map is generated in-memory from a seed rather than
+        // fetched (see selectMapLoader). A set mapSeed is a locked/previewed
+        // map; otherwise it is derived from gameID so no one sees it in advance.
+        const startInfo = message.gameStartInfo;
+        const selectedLoader = selectMapLoader(
           mapLoader,
+          startInfo.config.gameMap,
+          startInfo.config.mapSeed,
+          startInfo.gameID,
+        );
+        gameRunner = createGameRunner(
+          startInfo,
+          message.clientID,
+          selectedLoader,
           gameUpdate,
         ).then((gr) => {
           sendMessage({

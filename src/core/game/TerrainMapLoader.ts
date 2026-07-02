@@ -48,8 +48,12 @@ export async function loadTerrainMap(
   mapSize: GameMapSize,
   terrainMapFileLoader: GameMapLoader,
 ): Promise<TerrainMapData> {
+  // Don't cache the procedural "Random" map: its terrain depends on a per-game
+  // seed the cache key doesn't capture, so a second Random game in the same
+  // session must regenerate rather than reuse the first game's map.
+  const cacheable = map !== GameMapType.Random;
   const cacheKey = `${map}:${mapSize}`;
-  const cached = loadedMaps.get(cacheKey);
+  const cached = cacheable ? loadedMaps.get(cacheKey) : undefined;
   if (cached !== undefined) return cached;
   const mapFiles = terrainMapFileLoader.getMapData(map);
   const manifest = await mapFiles.manifest();
@@ -108,7 +112,7 @@ export async function loadTerrainMap(
     miniGameMap: miniMap,
     teamGameSpawnAreas,
   };
-  loadedMaps.set(cacheKey, result);
+  if (cacheable) loadedMaps.set(cacheKey, result);
   return result;
 }
 

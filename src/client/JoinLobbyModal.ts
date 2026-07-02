@@ -23,10 +23,12 @@ import {
 import {
   Difficulty,
   GameMapSize,
+  GameMapType,
   GameMode,
   GameType,
   HumansVsNations,
 } from "../core/game/Game";
+import { ProceduralMap } from "../core/game/ProceduralMapGenerator";
 import { getApiBase } from "./Api";
 import { crazyGamesSDK } from "./CrazyGamesSDK";
 import { JoinLobbyEvent } from "./Main";
@@ -806,6 +808,14 @@ export class JoinLobbyModal extends BaseModal {
       return;
     }
     const currentMap = this.gameConfig.gameMap;
+    // Procedural "Random" map: no manifest on disk. Derive the (land-scaled)
+    // nation count from the seed instead of fetching; the constructor is cheap.
+    if (currentMap === GameMapType.Random) {
+      this.nationCount = new ProceduralMap(
+        this.gameConfig.mapSeed ?? 0,
+      ).nationCount;
+      return;
+    }
     try {
       const mapData = terrainMapFileLoader.getMapData(currentMap);
       const manifest = await mapData.manifest();

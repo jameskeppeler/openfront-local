@@ -11,6 +11,7 @@ import {
   GameType,
   UnitType,
 } from "../core/game/Game";
+import { ProceduralMap } from "../core/game/ProceduralMapGenerator";
 import { TeamCountConfig } from "../core/Schemas";
 import { generateID } from "../core/Util";
 import { hasLinkedAccount } from "./Api";
@@ -80,6 +81,10 @@ export class SinglePlayerModal extends BaseModal {
   @state() private instantBuild: boolean = DEFAULT_OPTIONS.instantBuild;
   @state() private randomSpawn: boolean = DEFAULT_OPTIONS.randomSpawn;
   @state() private useRandomMap: boolean = DEFAULT_OPTIONS.useRandomMap;
+  // Seed for the procedural "Random" map; null => fully random (hidden).
+  @state() private mapSeed: number | null = Math.floor(
+    Math.random() * 0x7fffffff,
+  );
   @state() private gameMode: GameMode = DEFAULT_OPTIONS.gameMode;
   @state() private teamCount: TeamCountConfig = DEFAULT_OPTIONS.teamCount;
   @state() private showAchievements: boolean = false;
@@ -265,6 +270,7 @@ export class SinglePlayerModal extends BaseModal {
               map: {
                 selected: this.selectedMap,
                 useRandom: this.useRandomMap,
+                mapSeed: this.mapSeed,
                 showMedals: this.showAchievements,
                 mapWins: this.mapWins,
               },
@@ -330,6 +336,7 @@ export class SinglePlayerModal extends BaseModal {
             }}
             @map-selected=${this.handleConfigMapSelected}
             @random-map-selected=${this.handleConfigRandomMapSelected}
+            @random-seed-changed=${this.handleRandomSeedChanged}
             @difficulty-selected=${this.handleConfigDifficultySelected}
             @game-mode-selected=${this.handleConfigGameModeSelected}
             @team-count-selected=${this.handleConfigTeamCountSelected}
@@ -424,8 +431,20 @@ export class SinglePlayerModal extends BaseModal {
   private handleMapSelection(value: GameMapType) {
     this.selectedMap = value;
     this.useRandomMap = false;
+    // Selecting the generated map should show a preview, so ensure a concrete
+    // seed exists (a prior "surprise me" may have cleared it).
+    if (value === GameMapType.Random && this.mapSeed === null) {
+      this.mapSeed = Math.floor(Math.random() * 0x7fffffff);
+    }
     void this.loadNationCount();
   }
+
+  private handleRandomSeedChanged = (e: Event) => {
+    const detail = (e as CustomEvent<{ seed: number | null }>).detail;
+    this.mapSeed = detail.seed;
+    // Regenerating changes the map (and its land-scaled nation count).
+    void this.loadNationCount();
+  };
 
   private handleConfigMapSelected = (e: Event) => {
     const customEvent = e as CustomEvent<{ map: GameMapType }>;
@@ -664,6 +683,8 @@ export class SinglePlayerModal extends BaseModal {
             ],
             config: {
               gameMap: this.selectedMap,
+              mapSeed:
+                this.selectedMap === GameMapType.Random ? this.mapSeed : null,
               gameMapSize: this.compactMap
                 ? GameMapSize.Compact
                 : GameMapSize.Normal,
@@ -712,6 +733,18 @@ export class SinglePlayerModal extends BaseModal {
 
   private async loadNationCount() {
     const currentMap = this.selectedMap;
+    // The procedural "Random" map has no manifest on disk; its nation count is
+    // derived (by land area) from the seed. Read it from the generator — the
+    // constructor is cheap (no rasterize) — mirroring how stock maps use
+    // manifest.nations.length as the default.
+    if (currentMap === GameMapType.Random) {
+      const count = new ProceduralMap(this.mapSeed ?? 0).nationCount;
+      this.defaultNationCount = count;
+      this.nations = this.compactMap
+        ? Math.max(0, Math.floor(count * 0.25))
+        : count;
+      return;
+    }
     try {
       const mapData = this.mapLoader.getMapData(currentMap);
       const manifest = await mapData.manifest();

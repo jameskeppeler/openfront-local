@@ -3,6 +3,7 @@
 // Regenerate with `npm run gen-maps`.
 
 export enum GameMapType {
+  Random = "Random", // procedurally generated at runtime (no asset dir)
   PalmerPeninsula = "Palmer Peninsula", // custom map
   CanadianShield = "Canadian Shield", // custom map
   CobhamHighResV2 = "Cobham High-res V2", // custom map
@@ -166,6 +167,13 @@ export interface MapInfo {
 }
 
 export const maps: readonly MapInfo[] = [
+  {
+    id: "Random",
+    type: GameMapType.Random,
+    translationKey: "map.random",
+    categories: ["custom"],
+    multiplayerFrequency: 0,
+  },
   {
     id: "PalmerPeninsula",
     type: GameMapType.PalmerPeninsula,

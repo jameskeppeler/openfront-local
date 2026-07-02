@@ -182,6 +182,11 @@ export class Config {
   waterNukes(): boolean {
     return this._gameConfig.waterNukes ?? false;
   }
+  // Explicit seed for the "Random" procedural map. null/undefined => "fully
+  // random" (caller derives the seed from gameID at match start).
+  mapSeed(): number | null {
+    return this._gameConfig.mapSeed ?? null;
+  }
   isRandomSpawn(): boolean {
     return this._gameConfig.randomSpawn;
   }

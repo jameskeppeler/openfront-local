@@ -184,6 +184,8 @@ export interface GameConfigSettingsData {
     randomMapDivider?: boolean;
     showMedals?: boolean;
     mapWins?: Map<GameMapType, Set<Difficulty>>;
+    // Seed for the procedural "Random" map; null means "fully random".
+    mapSeed?: number | null;
   };
   difficulty: {
     selected: Difficulty;
@@ -379,6 +381,7 @@ export class GameConfigSettings extends LitElement {
           html`<map-picker
             .selectedMap=${settings.map.selected}
             .useRandomMap=${settings.map.useRandom}
+            .mapSeed=${settings.map.mapSeed ?? null}
             .randomMapDivider=${settings.map.randomMapDivider ?? false}
             .showMedals=${settings.map.showMedals ?? false}
             .mapWins=${settings.map.mapWins ?? new Map()}

@@ -14,6 +14,7 @@ import {
 import { createPartialGameRecord, findClosestBy, replacer } from "../core/Util";
 import {
   BuildableUnit,
+  GameMapType,
   PlayerType,
   Structures,
   UnitType,
@@ -27,6 +28,7 @@ import {
   HashUpdate,
   WinUpdate,
 } from "../core/game/GameUpdates";
+import { selectMapLoader } from "../core/game/ProceduralGameMapLoader";
 import { loadTerrainMap, TerrainMapData } from "../core/game/TerrainMapLoader";
 import {
   GRAPHICS_KEY,
@@ -146,11 +148,16 @@ export function joinLobby(
       console.log(
         `lobby: game prestarting: ${JSON.stringify(message, replacer)}`,
       );
-      terrainLoad = loadTerrainMap(
-        message.gameMap,
-        message.gameMapSize,
-        terrainMapFileLoader,
-      );
+      // The procedural "Random" map has no files to fetch, and the prestart
+      // message doesn't carry its seed — skip the preload and let
+      // createClientGame generate it from the full game config below.
+      if (message.gameMap !== GameMapType.Random) {
+        terrainLoad = loadTerrainMap(
+          message.gameMap,
+          message.gameMapSize,
+          terrainMapFileLoader,
+        );
+      }
       resolvePrestart();
     }
     if (message.type === "start") {
@@ -465,7 +472,12 @@ async function createClientGame(
     gameMap = await loadTerrainMap(
       lobbyConfig.gameStartInfo.config.gameMap,
       lobbyConfig.gameStartInfo.config.gameMapSize,
-      mapLoader,
+      selectMapLoader(
+        mapLoader,
+        lobbyConfig.gameStartInfo.config.gameMap,
+        lobbyConfig.gameStartInfo.config.mapSeed,
+        lobbyConfig.gameID,
+      ),
     );
   }
   // Kick off the font-atlas fetch so it overlaps with worker init; the

@@ -29,6 +29,10 @@ const FREQUENCY_EXEMPTIONS: Set<GameMapName> = new Set([
   "BritanniaClassic",
 ]);
 
+// Maps generated procedurally at runtime (no static assets on disk): they have
+// no map-generator/assets or resources/maps files by design.
+const RUNTIME_GENERATED: Set<GameMapName> = new Set(["Random"]);
+
 // Keys in the en.json "map" section that are UI strings, not map names.
 const EN_JSON_META_KEYS = new Set([
   "map",
@@ -65,6 +69,7 @@ describe("Map consistency", () => {
   test("Every GameMapType has map-generator assets (image.png + info.json only)", () => {
     const errors: string[] = [];
     for (const key of allMapKeys) {
+      if (RUNTIME_GENERATED.has(key)) continue;
       const folder = toFolderName(key);
       const dir = path.join(MAP_GEN_MAPS, folder);
 
@@ -227,6 +232,7 @@ describe("Map consistency", () => {
     ];
 
     for (const key of allMapKeys) {
+      if (RUNTIME_GENERATED.has(key)) continue;
       const folder = toFolderName(key);
       const dir = path.join(RESOURCES_MAPS, folder);
 

@@ -99,22 +99,120 @@ function customMapAdmin(resourcesDir: string, rootDir: string): Plugin {
       server.middlewares.use((req, res, next) => {
         if (!req.url) return next();
         const url = new URL(req.url, "http://x");
-        if (url.pathname !== "/__delete-map") return next();
         const json = (code: number, body: unknown) => {
           res.statusCode = code;
           res.setHeader("Content-Type", "application/json");
           res.end(JSON.stringify(body));
         };
+
+        // Save a generated map as a real custom map: writes the .bin LODs +
+        // manifest (+ thumbnail) into resources/maps/<folder> and registers it
+        // in Maps.gen.ts + en.json, exactly like a mapmaker-produced map.
+        if (url.pathname === "/__save-map") {
+          if (req.method !== "POST")
+            return json(405, { ok: false, error: "POST only" });
+          const chunks: Buffer[] = [];
+          let size = 0;
+          req.on("data", (c: Buffer) => {
+            size += c.length;
+            if (size > 64 * 1024 * 1024) req.destroy();
+            else chunks.push(c);
+          });
+          req.on("end", () => {
+            try {
+              const body = JSON.parse(Buffer.concat(chunks).toString("utf-8"));
+              const rawName = String(body.name ?? "").trim();
+              const id = rawName.replace(/[^A-Za-z0-9]/g, "");
+              if (!id || !/^[A-Za-z]/.test(id))
+                return json(400, {
+                  ok: false,
+                  error: "name must start with a letter (A-Z, 0-9 only)",
+                });
+              const folder = id.toLowerCase();
+              for (const key of ["map", "map4x", "map16x"] as const) {
+                if (typeof body[key] !== "string")
+                  return json(400, { ok: false, error: `missing ${key}` });
+              }
+
+              const mapsTsPath = path.join(
+                rootDir,
+                "src/core/game/Maps.gen.ts",
+              );
+              let ts = fs.readFileSync(mapsTsPath, "utf-8");
+              if (
+                new RegExp(`\\bid:\\s*"${id}"`).test(ts) ||
+                new RegExp(`\\n[ \\t]*${id}\\s*=`).test(ts)
+              )
+                return json(409, {
+                  ok: false,
+                  error: `a map named "${id}" already exists`,
+                });
+
+              const dir = path.join(resourcesDir, "maps", folder);
+              fs.mkdirSync(dir, { recursive: true });
+              fs.writeFileSync(
+                path.join(dir, "map.bin"),
+                Buffer.from(body.map, "base64"),
+              );
+              fs.writeFileSync(
+                path.join(dir, "map4x.bin"),
+                Buffer.from(body.map4x, "base64"),
+              );
+              fs.writeFileSync(
+                path.join(dir, "map16x.bin"),
+                Buffer.from(body.map16x, "base64"),
+              );
+              const manifest = body.manifest ?? {};
+              manifest.name = rawName;
+              fs.writeFileSync(
+                path.join(dir, "manifest.json"),
+                JSON.stringify(manifest, null, 2),
+              );
+              if (typeof body.thumbnail === "string")
+                fs.writeFileSync(
+                  path.join(dir, "thumbnail.webp"),
+                  Buffer.from(body.thumbnail, "base64"),
+                );
+
+              // Register: enum entry + maps[] entry (custom) + en.json name.
+              ts = ts.replace(
+                "export enum GameMapType {\n",
+                `export enum GameMapType {\n  ${id} = ${JSON.stringify(rawName)}, // custom map\n`,
+              );
+              const entry =
+                `  {\n    id: "${id}",\n    type: GameMapType.${id},\n` +
+                `    translationKey: "map.${folder}",\n    categories: ["custom"],\n` +
+                `    multiplayerFrequency: 0,\n  },\n`;
+              ts = ts.replace(
+                "export const maps: readonly MapInfo[] = [\n",
+                `export const maps: readonly MapInfo[] = [\n${entry}`,
+              );
+              fs.writeFileSync(mapsTsPath, ts);
+
+              const enPath = path.join(resourcesDir, "lang", "en.json");
+              let en = fs.readFileSync(enPath, "utf-8");
+              en = en.replace(
+                /\n {2}"map": \{\n/,
+                `\n  "map": {\n    ${JSON.stringify(folder)}: ${JSON.stringify(rawName)},\n`,
+              );
+              fs.writeFileSync(enPath, en);
+
+              return json(200, { ok: true, id, folder });
+            } catch (e) {
+              return json(500, { ok: false, error: (e as Error).message });
+            }
+          });
+          return;
+        }
+
+        if (url.pathname !== "/__delete-map") return next();
         if (req.method !== "POST")
           return json(405, { ok: false, error: "POST only" });
         const id = url.searchParams.get("id") ?? "";
         if (!/^[A-Za-z0-9]+$/.test(id))
           return json(400, { ok: false, error: "invalid id" });
         try {
-          const mapsTsPath = path.join(
-            rootDir,
-            "src/core/game/Maps.gen.ts",
-          );
+          const mapsTsPath = path.join(rootDir, "src/core/game/Maps.gen.ts");
           let ts = fs.readFileSync(mapsTsPath, "utf-8");
           const blockRe = new RegExp(
             `\\n[ \\t]*\\{\\s*id:\\s*"${id}"[\\s\\S]*?\\n[ \\t]*\\},`,
@@ -133,10 +231,7 @@ function customMapAdmin(resourcesDir: string, rootDir: string): Plugin {
           const folder = id.toLowerCase();
           const enPath = path.join(resourcesDir, "lang", "en.json");
           let en = fs.readFileSync(enPath, "utf-8");
-          en = en.replace(
-            new RegExp(`\\n[ \\t]*"${folder}":\\s*"[^"]*",`),
-            "",
-          );
+          en = en.replace(new RegExp(`\\n[ \\t]*"${folder}":\\s*"[^"]*",`), "");
           fs.writeFileSync(enPath, en);
           const dir = path.join(resourcesDir, "maps", folder);
           if (fs.existsSync(dir))

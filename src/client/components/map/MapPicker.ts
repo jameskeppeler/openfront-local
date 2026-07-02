@@ -13,13 +13,20 @@ import {
 import { translateText } from "../../Utils";
 import "./MapDisplay";
 import { getFavoriteMaps, starIcon, toggleFavoriteMap } from "./MapFavorites";
+import "./RandomMapPreview";
 const randomMap = assetUrl("images/RandomMap.webp");
+
+// The procedural "Random" map has no asset dir; it's rendered via a live
+// preview in the special section rather than as a normal thumbnail card.
+function isProceduralRandom(m: MapInfo): boolean {
+  return m.type === GameMapType.Random;
+}
 
 type MapTab = "featured" | "all" | "custom" | "favorites";
 
 // Featured grid order: ranked maps first (1 = first), unranked alphabetical.
 const featuredMaps: MapInfo[] = maps
-  .filter((m) => m.categories.includes("featured"))
+  .filter((m) => m.categories.includes("featured") && !isProceduralRandom(m))
   .sort(
     (a, b) =>
       (a.featuredRank ?? Number.MAX_SAFE_INTEGER) -
@@ -27,7 +34,9 @@ const featuredMaps: MapInfo[] = maps
   );
 
 function mapsInCategory(category: MapCategory): MapInfo[] {
-  return maps.filter((m) => m.categories.includes(category));
+  return maps.filter(
+    (m) => m.categories.includes(category) && !isProceduralRandom(m),
+  );
 }
 
 // --- Soft-delete for custom maps ------------------------------------------
@@ -96,6 +105,7 @@ if (typeof window !== "undefined") {
 export class MapPicker extends LitElement {
   @property({ type: String }) selectedMap: GameMapType = GameMapType.World;
   @property({ type: Boolean }) useRandomMap = false;
+  @property({ type: Number }) mapSeed: number | null = null;
   @property({ type: Boolean }) showMedals = false;
   @property({ type: Boolean }) randomMapDivider = false;
   @property({ type: String }) searchQuery = "";
@@ -124,6 +134,10 @@ export class MapPicker extends LitElement {
     this.onSelectRandom?.();
   };
 
+  private handleSelectGenerated = () => {
+    this.onSelectMap?.(GameMapType.Random);
+  };
+
   private toggleCategory(categoryKey: string) {
     const expanded = new Set(this.expandedCategories);
     if (expanded.has(categoryKey)) {
@@ -142,6 +156,7 @@ export class MapPicker extends LitElement {
     if (!this.searchQuery.trim()) return [];
     const query = this.searchQuery.trim().toLowerCase();
     return maps.filter((m) => {
+      if (isProceduralRandom(m)) return false;
       const name = translateText(m.translationKey).toLowerCase();
       const id = m.id.toLowerCase();
       return name.includes(query) || id.includes(query);
@@ -489,7 +504,31 @@ export class MapPicker extends LitElement {
                 ${translateText("map.random")}
               </div>
             </button>
+            <button
+              type="button"
+              class="w-full h-full p-3 flex flex-col items-center justify-between rounded-xl border cursor-pointer transition-all duration-200 active:scale-95 gap-3 group ${this
+                .selectedMap === GameMapType.Random && !this.useRandomMap
+                ? "bg-malibu-blue/20 border-malibu-blue/50 shadow-[var(--shadow-malibu-blue-strong)]"
+                : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 hover:-translate-y-1"}"
+              @click=${this.handleSelectGenerated}
+            >
+              <div
+                class="w-full aspect-[2/1] relative overflow-hidden rounded-lg bg-gradient-to-br from-[#4a85b6] via-[#568c3f] to-[#8a847e] flex items-center justify-center"
+              >
+                <span class="text-3xl font-black text-white/70">⬡</span>
+              </div>
+              <div
+                class="text-xs font-bold text-white uppercase tracking-wider text-center leading-tight break-words hyphens-auto"
+              >
+                ${translateText("map_component.random_generated")}
+              </div>
+            </button>
           </div>
+          ${this.selectedMap === GameMapType.Random && !this.useRandomMap
+            ? html`<random-map-preview
+                .seed=${this.mapSeed}
+              ></random-map-preview>`
+            : null}
         </div>
       </div>
     `;
